@@ -13,7 +13,7 @@ int main( int agc, char *argv[])
         client << "GET index.html\n";
         // client << "PUT index.html\n";
         client >> buffer;
-        std::cout << buffer;
+        std::cout << buffer << std::endl;
     }
     catch(std::exception &ex)
     {
