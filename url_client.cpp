@@ -12,7 +12,6 @@ void receive(URLClient &client)
 
     while( client.has_more_data() )
     {
-        std::cout << "I am here" << std::endl;
         memset(buffer, 0, sizeof(buffer));
         client >> buffer;
         std::cout << buffer << std::endl;

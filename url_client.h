@@ -49,7 +49,10 @@ class URLClient
 
         int operator >> (char *data)
         {
-            return read(_sock_fd, data, MAX_DATA_LENGTH);
+            if ( read(_sock_fd, data, MAX_DATA_LENGTH) < 0)
+            {
+                throw URLException("Cannot read from server");
+            }
         }
 
         bool has_more_data()
