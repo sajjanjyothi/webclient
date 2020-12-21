@@ -2,6 +2,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -39,7 +40,6 @@ class URLClient
             {
                 throw URLException("Cannot connect");
             }
-
         }
   
         int operator << (const char *data)
@@ -52,6 +52,19 @@ class URLClient
             return read(_sock_fd, data, MAX_DATA_LENGTH);
         }
 
+        bool has_more_data()
+        {    
+            FD_ZERO(&rfds);
+            FD_SET(_sock_fd, &rfds);
+            if (select(_sock_fd+1 , &rfds, NULL, NULL, NULL))
+            {      
+                FD_CLR (_sock_fd, &rfds); // Clear the event in socket  
+                return true;
+            }
+
+            return false;
+        }
+
         ~URLClient()
         {
             if ( _sock_fd != -1)
@@ -61,5 +74,7 @@ class URLClient
             }
         }
     private:
-        int _sock_fd;
+        int    _sock_fd;
+        fd_set  rfds;
+
 };

@@ -3,17 +3,31 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <thread>
+#include <chrono>
+
+void receive(URLClient &client)
+{
+    char buffer[MAX_DATA_LENGTH];
+
+    while( client.has_more_data() )
+    {
+        std::cout << "I am here" << std::endl;
+        memset(buffer, 0, sizeof(buffer));
+        client >> buffer;
+        std::cout << buffer << std::endl;
+    }
+}
 
 int main( int agc, char *argv[])
 {
     try
     {
         URLClient client =  URLClient(argv[1], atoi(argv[2]) );
-        char buffer[1024];
+        std::thread client_thread(receive, std::ref(client));
         client << "GET index.html\n";
-        // client << "PUT index.html\n";
-        client >> buffer;
-        std::cout << buffer << std::endl;
+
+        client_thread.join();
     }
     catch(std::exception &ex)
     {
