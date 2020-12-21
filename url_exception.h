@@ -10,7 +10,7 @@ class URLException : public std::exception
             _exception_string = exception_string;
         }
 
-        const char* what() throw()
+        const char* what() const throw()
         {
             return _exception_string.c_str();
         }
