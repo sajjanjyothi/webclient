@@ -12,9 +12,17 @@ void receive(URLClient &client)
 
     while( client.has_more_data() )
     {
-        memset(buffer, 0, sizeof(buffer));
-        client >> buffer;
-        std::cout << buffer << std::endl;
+        try
+        {
+            memset(buffer, 0, sizeof(buffer));
+            client >> buffer;
+            std::cout << buffer << std::endl;
+        }
+        catch (std::exception &ex)
+        {
+            std::cout << ex.what() << std::endl;
+            return;
+        }
     }
 }
 
@@ -24,13 +32,21 @@ void send_packet(URLClient &client)
     
     while(true)
     {
-        std::getline(std::cin, line);
-        if (line == "quit")
+        try
         {
-            break;
+            std::getline(std::cin, line);
+            if (line == "quit")
+            {
+                break;
+            }
+            client << line.c_str();
+            client << "\r\n";
         }
-        client << line.c_str();
-        client << "\r\n";
+        catch (std::exception &ex)
+        {
+            std::cout<<ex.what()<<std::endl;
+            return;
+        }
     }
 
 }

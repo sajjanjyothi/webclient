@@ -12,9 +12,16 @@ void receive(URLClient &client)
 
     while( client.has_more_data() )
     {
-        memset(buffer, 0, sizeof(buffer));
-        client >> buffer;
-        std::cout << buffer << std::endl;
+        try
+        {
+            memset(buffer, 0, sizeof(buffer));
+            client >> buffer;
+            std::cout << buffer << std::endl;
+        }
+        catch (std::exception &ex)
+        {
+            std::cout << ex.what() << std::endl;
+        }
     }
 }
 

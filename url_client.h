@@ -44,24 +44,33 @@ class URLClient
   
         int operator << (const char *data)
         {
-            return write(_sock_fd,data,MAX_DATA_LENGTH);
+            int retWrite = -1;
+            if ( ( retWrite = write(_sock_fd,data,MAX_DATA_LENGTH) ) <= 0)
+            {
+                throw URLException("Cannot write to server");
+            }
+            return retWrite;
         }
 
         int operator >> (char *data)
         {
-            if ( read(_sock_fd, data, MAX_DATA_LENGTH) < 0)
+            int retRead = -1;
+
+            if ( (retRead = read(_sock_fd, data, MAX_DATA_LENGTH)) <= 0)
             {
                 throw URLException("Cannot read from server");
             }
+            return retRead;
         }
 
         bool has_more_data()
         {    
-            FD_ZERO(&rfds);
-            FD_SET(_sock_fd, &rfds);
-            if (select(_sock_fd+1 , &rfds, NULL, NULL, NULL))
+            FD_ZERO(&_rfds);
+            FD_SET(_sock_fd, &_rfds);
+
+            if ( select(_sock_fd+1 , &_rfds, NULL, NULL, NULL) )
             {      
-                FD_CLR (_sock_fd, &rfds); // Clear the event in socket  
+                FD_CLR (_sock_fd, &_rfds); // Clear the event in socket  
                 return true;
             }
 
@@ -78,6 +87,6 @@ class URLClient
         }
     private:
         int    _sock_fd;
-        fd_set  rfds;
+        fd_set  _rfds;
 
 };
